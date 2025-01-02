@@ -11,5 +11,16 @@ The overall system architecture is mainly divided into four layers: client, fron
 
 ![image-20250103053046877](https://resource-un4.pages.dev/article/image-20250103053046877.png)
 
+youcan view :
+
+the back-end project in springboot_Jiang folder (task3); 
+
+the collection-end project in monitor_app folder (task2);
+
+the front-end project in analy_app folder(task1).
 
 
+
+no need to try connecting the ports of springboot or database which show on architecture diagram or write in demoproject. 
+
+Those ports are only accessable during class presentation and need to connect the wlan wifi (web) of my colleges. 
