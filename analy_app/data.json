@@ -1,0 +1,14 @@
+[
+  {
+    "id": "scala",
+    "label": "scala",
+    "value": 4,
+    "color": "hsl(79, 70%, 50%)"
+  },
+  {
+    "id": "hack",
+    "label": "hack",
+    "value": 433,
+    "color": "hsl(209, 70%, 50%)"
+  }
+]

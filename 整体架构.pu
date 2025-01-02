@@ -1,0 +1,28 @@
+@startuml
+skinparam componentStyle rectangle
+package "客户端" as Client {
+    component "浏览器" as Browser
+}
+package "前端Streamlit框架" as FrontEnd {
+    component "streamlit渲染" as StreamlitApp
+    component "数据分析、报警与预测等功能" as Func
+}
+package "后端" as BackEnd {
+    component "Spring Boot框架应用\n10.61.233.166:8686" as SpringBootApp
+    component "MySQL [MariaDB]数据库" as Database
+}
+package "采集端" as Collector {
+    component "ZigBee模块" as ZigBee
+    component "采集设备" as CollectionDevice
+    component "联网终端" as Device
+}
+component "环境信息" as environment
+environment <-d-> CollectionDevice : 采集数据
+Browser <-down-> StreamlitApp : 用户交互\n10.60.125.234:8501
+Device -down-> SpringBootApp : 上传数据
+SpringBootApp <-r-> Database : SQL数据交互
+Func <--> SpringBootApp : API数据交互
+CollectionDevice <-r-> ZigBee : 转发数据
+ZigBee <-r-> Device : 串口通讯传输
+Func -r-> StreamlitApp : 提供画面渲染数据
+@enduml
