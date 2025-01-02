@@ -1,0 +1,34 @@
+[[pages]]
+path = "DashBoard.py"
+name = "DashBoard"
+icon = "📄"
+
+[[pages]]
+name = "Data"
+icon = ":pig:"
+is_section = true
+
+[[pages]]
+path = "DetectedData.py"
+name = "Detected Data"
+icon = ":material/history:"
+
+[[pages]]
+path = "Monitor_Info.py"
+name = "Monitor Info"
+icon = "📖"
+
+[[pages]]
+name = "More Functions"
+icon = ":horse:"
+is_section = true
+
+[[pages]]
+path = "Alert.py"
+name = "Alert"
+icon = "📖"
+[[pages]]
+path = "Predict.py"
+name = "Predict"
+icon = "🧰"
+url_path = "a_very_long_page_title"
