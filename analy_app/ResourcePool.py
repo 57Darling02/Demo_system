@@ -104,17 +104,7 @@ class ResourcePool:
         data = self.get_detected_data()
         data = data.sort_values(by='collect_time')
         data = data.drop_duplicates(subset=['monitor_id'], keep='last')
-        df = data
-        df['rainfallColor'] = "hsl(8, 70%, 50%)"
-        df['air_temperatureColor'] = "hsl(270, 70%, 50%)"
-        df['humidityColor'] = "hsl(103, 70%, 50%)"
-        df['wind_speedColor'] = "hsl(103, 70%, 50%)"
-        df['air_pressureColor'] = "hsl(103, 70%, 50%)"
-
-        # 选择需要的列并转换为所需格式
-        result = df[['monitor_id', 'rainfall', 'rainfallColor', 'air_temperature', 'air_temperatureColor', 'humidity',
-                     'humidityColor','wind_speed',"wind_speedColor",'air_pressure','air_pressureColor']].to_dict(orient='records')
-        return result
+        return data
 
 
 

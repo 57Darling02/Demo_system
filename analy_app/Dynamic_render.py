@@ -1,4 +1,4 @@
-from streamlit_elements import elements, dashboard, mui, editor, media, lazy, sync, nivo
+from streamlit_elements import elements, dashboard, mui, editor, media, lazy, sync, nivo, event
 import streamlit as st
 from ResourcePool import resource_pool
 import time
@@ -23,9 +23,21 @@ def get_monitor_alive(timestamp):
     all_monitor_number = len(df)
     return alive_monitor_number, all_monitor_number
 # @st.cache_data
+# @st.fragment
 def get_realtime_data(timestamp):
-    df = resource_pool.get_realtime_data()
-    return df
+    data = resource_pool.get_realtime_data()
+    df = data
+    df['rainfallColor'] = "hsl(8, 70%, 50%)"
+    df['air_temperatureColor'] = "hsl(270, 70%, 50%)"
+    df['humidityColor'] = "hsl(103, 70%, 50%)"
+    df['wind_speedColor'] = "hsl(103, 70%, 50%)"
+    df['air_pressureColor'] = "hsl(103, 70%, 50%)"
+
+    # 选择需要的列并转换为所需格式
+    result = df[['monitor_id', 'rainfall', 'rainfallColor', 'air_temperature', 'air_temperatureColor', 'humidity',
+                 'humidityColor', 'wind_speed', "wind_speedColor", 'air_pressure', 'air_pressureColor']].to_dict(
+        orient='records')
+    return result
 
 # @st.cache_data
 def get_detected_data(timestamp):
@@ -57,17 +69,21 @@ def process_for_linechart(split_dfs, monitor_id,column_y):
         "data": data_list
     }
     result.append(data_dict)
-    print(f"result:{result}")
+    # print(f"result:{result}")
     return result
 
-@st.fragment(run_every=f"{update_interval}s")
+# @st.fragment(run_every=f"{update_interval}s")
 def render_monitor_chart():
     update_timestamp = resource_pool.get_update_timestamp()
     # print("render_monitor_chart")
     alive_monitor_number, all_monitor_number = get_monitor_alive(update_timestamp)
+    def update():
+        st.session_state.alive_monitor_number, st.session_state.all_monitor_number = get_monitor_alive(update_timestamp)
+
     st.markdown(f"### Monitor")
     st.markdown(f"#### Total : {all_monitor_number} alive : {alive_monitor_number}")
     with elements("Monitor"):
+        event.Interval(update_interval, update)
         da = [
             {
                 "id": "current",
@@ -126,10 +142,16 @@ def render_monitor_chart():
                     }
                 ]
             )
-@st.fragment(run_every=f"{update_interval}s")
-def render_monitor_pie():
-    alive_monitor_number, all_monitor_number = get_monitor_alive(resource_pool.update_timestamp)
-    realtime_data = get_realtime_data(resource_pool.update_timestamp)
+# @st.fragment(run_every=f"{update_interval}s")
+def render_dashboard():
+    st.session_state.alive_monitor_number, st.session_state.all_monitor_number = get_monitor_alive(resource_pool.update_timestamp)
+    st.session_state.realtime_data = get_realtime_data(resource_pool.update_timestamp)
+    st.session_state.split_dfs = split_dataframe_by_column(get_detected_data(resource_pool.update_timestamp), 'monitor_id')
+    def update():
+        st.session_state.alive_monitor_number, st.session_state.all_monitor_number = get_monitor_alive(resource_pool.update_timestamp)
+        st.session_state.realtime_data = get_realtime_data(resource_pool.update_timestamp)
+        st.session_state.split_dfs = split_dataframe_by_column(get_detected_data(resource_pool.update_timestamp),
+                                                               'monitor_id')
     layout = [
         # Chart item is positioned in coordinates x=6 and y=0, and takes 6/12 columns and has a height of 3.
         dashboard.Item("MonitorStatus", 0, 0, 3, 3),
@@ -138,11 +160,12 @@ def render_monitor_pie():
         dashboard.Item("going", 0, 4, 9, 2)
     ]
     with elements("dashboard"):
+        event.Interval(update_interval, update)
         with dashboard.Grid(layout, draggableHandle=".draggable"):
             with mui.Card(key="MonitorStatus", sx={"display": "flex", "flexDirection": "column"}):
                 mui.CardHeader(title="Monitor status", className="draggable")
                 with mui.CardContent(sx={"flex": 1, "minHeight": 0}):
-                    alive_monitor_number, all_monitor_number = alive_monitor_number, all_monitor_number
+                    alive_monitor_number, all_monitor_number = st.session_state.alive_monitor_number, st.session_state.all_monitor_number
                     da = [
                         {"id": "online_monitor", "label": "online_monitor", "value": alive_monitor_number,
                          "color": "hsl(120, 70%, 70%)"},
@@ -225,9 +248,8 @@ def render_monitor_pie():
             with mui.Card(key="realtime_box", sx={"display": "flex", "flexDirection": "column"}):
                 mui.CardHeader(title="realtime_box", className="draggable")
                 with mui.CardContent(sx={"flex": 1, "minHeight": 0}):
-                    realtime_data = realtime_data
                     nivo.Bar(
-                        data= realtime_data,
+                        data= st.session_state.realtime_data,
                         keys=[
                             'rainfall',
                             'air_temperature',
@@ -328,7 +350,7 @@ def render_monitor_pie():
             with mui.Card(key="going_choose_box", sx={"display": "flex", "flexDirection": "column"}):
                 mui.CardHeader(title="走势选择", className="draggable")
                 with mui.CardContent(sx={"flex": 1, "minHeight": 0}):
-                    monitor_ids = [item["monitor_id"] for item in realtime_data]
+                    monitor_ids = [item["monitor_id"] for item in st.session_state.realtime_data]
                     choose_columns = ["rainfall", "air_temperature", "humidity", "wind_speed", "air_pressure","wind_direction"]
                     if not 'select_box1' in st.session_state or not 'select_box2' in st.session_state:
                         st.session_state.event = 1
@@ -392,9 +414,9 @@ def render_monitor_pie():
             with mui.Card(key="going", sx={"display": "flex", "flexDirection": "column"}):
                 mui.CardHeader(title="走势", className="draggable")
                 with mui.CardContent(sx={"flex": 1, "minHeight": 0}):
-                    split_dfs = split_dataframe_by_column(get_detected_data(resource_pool.update_timestamp), 'monitor_id')
+                    # st.session_state.split_dfs = split_dataframe_by_column(get_detected_data(resource_pool.update_timestamp), 'monitor_id')
                     nivo.Line(
-                        data=process_for_linechart(split_dfs, st.session_state.select_box1, st.session_state.select_box2),
+                        data=process_for_linechart(st.session_state.split_dfs, st.session_state.select_box1, st.session_state.select_box2),
                         margin={"top": 50, "right": 110, "bottom": 50, "left": 60},
                         xScale={"type": "point"},
                         yScale={
@@ -460,20 +482,30 @@ def render_monitor_pie():
                             }
                         ]
                     )
+                # with mui.Card(key="realtimebox2", sx={"display": "flex", "flexDirection": "column"}):
+                #     mui.CardHeader(title="实时数据", className="draggable")
+                #     with mui.CardContent(sx={"flex": 1, "minHeight": 0}):
+                #         split_dfs = split_dataframe_by_column(get_detected_data(resource_pool.update_timestamp),
+                #                                               'monitor_id')
+
+
 
 
 @st.fragment
 def render_monitor_list():
-    timestamp = resource_pool.get_update_timestamp()
-    df_monitor_info = get_monitor_info(timestamp)
-    while df_monitor_info.empty:
+    st.session_state.timestamp = resource_pool.get_update_timestamp()
+    st.session_state.df_monitor_info = get_monitor_info(st.session_state.timestamp)
+    def update():
+        st.session_state.timestamp = resource_pool.get_update_timestamp()
+        st.session_state.df_monitor_info = get_monitor_info(st.session_state.timestamp)
+    while st.session_state.df_monitor_info.empty:
         time.sleep(0.5)
-        df_monitor_info = get_monitor_info(timestamp)
+        st.session_state.df_monitor_info = get_monitor_info(st.session_state.timestamp)
     st.markdown("### Monitor List")
-    gb = GridOptionsBuilder.from_dataframe(df_monitor_info)
+    gb = GridOptionsBuilder.from_dataframe(st.session_state.df_monitor_info)
     go = gb.build()
     AgGrid(
-        df_monitor_info,
+        st.session_state.df_monitor_info,
         gridOptions=go,
         height=450,
         fit_columns_on_grid_load=True)

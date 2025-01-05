@@ -1,34 +1,34 @@
 [[pages]]
 path = "DashBoard.py"
 name = "DashBoard"
-icon = "📄"
+icon = ":material/view_quilt:"
 
 [[pages]]
 name = "Data"
-icon = ":pig:"
+icon = "📖"
 is_section = true
 
 [[pages]]
 path = "DetectedData.py"
 name = "Detected Data"
-icon = ":material/history:"
+icon = ":material/table_chart:"
 
 [[pages]]
 path = "Monitor_Info.py"
 name = "Monitor Info"
-icon = "📖"
+icon = ":material/insert_chart_outlined:"
 
 [[pages]]
 name = "More Functions"
-icon = ":horse:"
+icon = "📜"
 is_section = true
 
 [[pages]]
 path = "Alert.py"
 name = "Alert"
-icon = "📖"
+icon = ":material/notification_important:"
 [[pages]]
 path = "Predict.py"
 name = "Predict"
-icon = "🧰"
+icon = ":material/timeline:"
 url_path = "a_very_long_page_title"
