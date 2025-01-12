@@ -54,6 +54,7 @@ try:
     else:
         pg = st.navigation([login_page])
     # add_page_title(pg)
+
     pg.run()
 except InterruptedError:
     print("Cleaning up...")

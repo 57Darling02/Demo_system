@@ -1,34 +1,34 @@
 [[pages]]
 path = "DashBoard.py"
-name = "DashBoard"
+name = "实时概览"
 icon = ":material/view_quilt:"
 
 [[pages]]
-name = "Data"
+name = "数据管理"
 icon = "📖"
 is_section = true
 
 [[pages]]
 path = "DetectedData.py"
-name = "Detected Data"
+name = "监测数据"
 icon = ":material/table_chart:"
 
 [[pages]]
 path = "Monitor_Info.py"
-name = "Monitor Info"
+name = "设备状态"
 icon = ":material/insert_chart_outlined:"
 
 [[pages]]
-name = "More Functions"
+name = "数据分析功能"
 icon = "📜"
 is_section = true
 
 [[pages]]
 path = "Alert.py"
-name = "Alert"
+name = "预警和建议"
 icon = ":material/notification_important:"
 [[pages]]
 path = "Predict.py"
-name = "Predict"
+name = "预测"
 icon = ":material/timeline:"
 url_path = "a_very_long_page_title"
