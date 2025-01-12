@@ -2,7 +2,7 @@ import time
 from datetime import datetime
 from random import randrange
 import requests
-
+base_url = "http://127.0.0.1:8686/monitor/"
 # 这本文件不需要修改，请直接import这个包并调用upload_data函数上传数据
 class Monitor:
     def __init__(self, id, password,base_url):
@@ -48,8 +48,8 @@ class Monitor:
 # 下面是示例，每隔一秒上传一次数据，请在其他地方导入这个包并使用upload_data函数上传数据
 if __name__ == "__main__":
     try:
-        monitor = Monitor(2,"123456",'http://db.57d02.cn:8686/monitor/')
-        for i in range(10):
+        monitor = Monitor(1,"114514",base_url)
+        for i in range(1000):
             time.sleep(1)
             # 模拟每一秒钟获取到数据并上传
             # 这里是获取的数据

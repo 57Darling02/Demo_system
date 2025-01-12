@@ -5,8 +5,8 @@ import requests
 
 # 使用 json.dumps 方法将 Python 对象转换为 JSON 字符串
 # json_str = json.dumps(data)
-# base_url = "http://127.0.0.1:8686/"
-base_url = "http://db.57d02.cn:8686/"
+base_url = "http://127.0.0.1:8686/"
+# base_url = "http://db.57d02.cn:8686/"
 
 def login(username, password):
     url = base_url+"user/login"

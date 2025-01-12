@@ -38,8 +38,12 @@ def process_data(split_dfs, monitor_id,column_y):
     }
     result.append(data_dict)
     return result
-
-@st.fragment(run_every=f"10s")
+def update():
+    st.session_state.realtime_data = get_realtime_data(resource_pool.update_timestamp)
+    st.session_state.split_dfs = split_dataframe_by_column(get_detected_data(resource_pool.update_timestamp),
+                                                           'monitor_id')
+# @st.fragment(run_every=f"10s")
+@st.fragment
 def render_predict():
     st.session_state.realtime_data = get_realtime_data(resource_pool.update_timestamp)
     st.session_state.split_dfs = split_dataframe_by_column(get_detected_data(resource_pool.update_timestamp), 'monitor_id')
@@ -50,7 +54,7 @@ def render_predict():
         dashboard.Item("going_predict", 0, 0, 9, 5)
     ]
     with elements("dashboard"):
-        # event.Interval(update_interval, update)
+        event.Interval(update_interval, update)
         with dashboard.Grid(layout, draggableHandle=".draggable"):
             with mui.Card(key="choose_box", sx={"display": "flex", "flexDirection": "column"}):
                 mui.CardHeader(title="走势选择", className="draggable")
@@ -63,7 +67,7 @@ def render_predict():
                         st.session_state.select_box3 = choose_columns[0]
                     with mui.Box(sx={'width': '100%', 'height': '50%'}):  #
                         with mui.FormControl(fullWidth=True):  # FormControl 表单控制接口；fullWidth=True 全宽
-                            mui.InputLabel('Monitor_id',
+                            mui.InputLabel('采集端id',
                                            id="monitor_id-select-label")  # InputLabel：输入标签，id 被 Select 引用👇
 
                             def on_Selectbox1(event, child):
@@ -76,7 +80,7 @@ def render_predict():
                                     defaultOpen=False,  # 选择器选项是否默认打开
                                     # defaultValue='',  # 默认输入值；在组件不受客户端控制时使用
                                     # id='select',  # select 元素的id
-                                    label="Monitor_id",  # 当InputLabel被引用时，充当占位符
+                                    label="采集端id",  # 当InputLabel被引用时，充当占位符
                                     labelId="monitor_id-select-label",  # 引用 InputLabel 的标签id
                                     multiple=False,  # 菜单支持多项选择
                                     native=False,  # 原生select元素，一般不使用 False
@@ -91,7 +95,7 @@ def render_predict():
 
                     with mui.Box(sx={'width': '100%', 'height': '50%'}):  #
                         with mui.FormControl(fullWidth=True):  # FormControl 表单控制接口；fullWidth=True 全宽
-                            mui.InputLabel('obj', id="obj-select-label")  # InputLabel：输入标签，id 被 Select 引用👇
+                            mui.InputLabel('查看项目', id="obj-select-label")  # InputLabel：输入标签，id 被 Select 引用👇
                             def on_Selectbox2(event, child):
                                 print(event, child.props.value)
                                 st.session_state.event = event
@@ -102,7 +106,7 @@ def render_predict():
                                     defaultOpen=False,  # 选择器选项是否默认打开
                                     # defaultValue='',  # 默认输入值；在组件不受客户端控制时使用
                                     # id='select',  # select 元素的id
-                                    label="Object",  # 当InputLabel被引用时，充当占位符
+                                    label="查看项目",  # 当InputLabel被引用时，充当占位符
                                     labelId="obj-select-label",  # 引用 InputLabel 的标签id
                                     multiple=False,  # 菜单支持多项选择
                                     native=False,  # 原生select元素，一般不使用 False
